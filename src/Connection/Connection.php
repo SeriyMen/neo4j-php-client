@@ -11,14 +11,12 @@
 
 namespace GraphAware\Neo4j\Client\Connection;
 
-use GraphAware\Bolt\Configuration as BoltConfiguration;
-use GraphAware\Bolt\Driver as BoltDriver;
-use GraphAware\Bolt\Exception\MessageFailureException;
-use GraphAware\Bolt\GraphDatabase as BoltGraphDB;
+use GraphAware\Neo4j\Client\BoltDriver\Configuration as BoltConfiguration;
+use GraphAware\Neo4j\Client\BoltDriver\Exception\MessageFailureException;
+use GraphAware\Neo4j\Client\BoltDriver\GraphDatabase as BoltGraphDB;
 use GraphAware\Common\Connection\BaseConfiguration;
 use GraphAware\Common\Cypher\Statement;
 use GraphAware\Neo4j\Client\Exception\Neo4jException;
-use GraphAware\Neo4j\Client\HttpDriver\GraphDatabase as HttpGraphDB;
 use GraphAware\Neo4j\Client\StackInterface;
 
 class Connection
@@ -170,20 +168,9 @@ class Connection
     {
         $params = parse_url($this->uri);
 
-        if (preg_match('/bolt/', $this->uri)) {
-            $port = isset($params['port']) ? (int) $params['port'] : BoltDriver::DEFAULT_TCP_PORT;
-            $uri = sprintf('%s://%s:%d', $params['scheme'], $params['host'], $port);
-            $config = null;
-            if (isset($params['user']) && isset($params['pass'])) {
-                $config = BoltConfiguration::create()->withCredentials($params['user'], $params['pass']);
-            }
-            $this->driver = BoltGraphDB::driver($uri, $config);
-        } elseif (preg_match('/http/', $this->uri)) {
-            $uri = $this->uri;
-            $this->driver = HttpGraphDB::driver($uri, $this->config);
-        } else {
-            throw new \RuntimeException(sprintf('Unable to build a driver from uri "%s"', $this->uri));
-        }
+        $uri = sprintf('%s://%s:%d', $params['scheme'], $params['host'], $params['port']);
+        $config = BoltConfiguration::create()->withCredentials($params['user'], $params['pass']);
+        $this->driver = BoltGraphDB::driver($uri, $config);
     }
 
     private function checkSession()

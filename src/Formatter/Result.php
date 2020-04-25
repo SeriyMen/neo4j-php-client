@@ -13,7 +13,6 @@ namespace GraphAware\Neo4j\Client\Formatter;
 
 use GraphAware\Common\Cypher\StatementInterface;
 use GraphAware\Common\Result\AbstractRecordCursor;
-use GraphAware\Common\Result\Record;
 use GraphAware\Neo4j\Client\Formatter\Type\Node;
 use GraphAware\Neo4j\Client\Formatter\Type\Path;
 use GraphAware\Neo4j\Client\Formatter\Type\Relationship;
